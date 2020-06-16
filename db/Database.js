@@ -9,13 +9,16 @@ class Database {
     console.log("connected to Database.js");
   }
 
-  viewEmployee() {
+  viewEmployees() {
    this.connection.query("SELECT * FROM employees", (err, result)=>{
      if(err) throw err;
-     console.log(result);
-     
+     result.forEach((row)=>{
+       console.log(row.first_name, row.last_name);
+       
+     })
+
    })
-     
+
   }
 
   createDepartments() {
