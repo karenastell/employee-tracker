@@ -1,16 +1,24 @@
 const connection = require("./connection");
 
 class Database {
-  constructor(connection) {
+  constructor() {
     this.connection = connection;
   }
 
-  testFunction(){
+  testFunction() {
     console.log("connected to Database.js");
   }
 
-  createDepartments() {
+  viewEmployee() {
+   this.connection.query("SELECT * FROM employees", (err, result)=>{
+     if(err) throw err;
+     console.log(result);
+     
+   })
+     
+  }
 
+  createDepartments() {
     return this.connection.query("SELECT");
   }
   createEmployee() {

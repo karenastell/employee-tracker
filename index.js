@@ -5,6 +5,7 @@ const db = new Database;
 
 
 db.testFunction();
+db.viewEmployee();
 
 const startQuestionsArray = [
   {
