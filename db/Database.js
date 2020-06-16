@@ -5,8 +5,13 @@ class Database {
     this.connection = connection;
   }
 
+  testFunction(){
+    console.log("connected to Database.js");
+  }
+
   createDepartments() {
-    return this.connection.query(SELECT);
+
+    return this.connection.query("SELECT");
   }
   createEmployee() {
     return this.connection.query(SELECT);
@@ -36,4 +41,4 @@ class Database {
   }
 }
 
-module.exports = new Database(connection);
+module.exports = Database;
