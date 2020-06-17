@@ -9,6 +9,6 @@ VALUES
 ("Software Engineer", 70000, 1), ("Lead Engineer", 100000, 1), ("Lawyer", 120000, 2), ("Salesperson", 85000, 3);
 
 INSERT INTO departments
-(name)
+(department)
 VALUES
 ("Engineering"), ("Legal"), ("Sales");

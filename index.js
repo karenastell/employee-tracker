@@ -1,7 +1,7 @@
 const inquirer = require("inquirer");
 const Database = require("./db/Database");
-const cTable = require("console.table");
-const connection = require("./db/connection");
+// const cTable = require("console.table");
+// const connection = require("./db/connection");
 const db = new Database();
 
 
@@ -70,6 +70,3 @@ const startApp = () => {
 
 startApp();
 
-// if statments to handle the choices to call a specific function
-// if the user selects to view Employees, it is going to call the getEmployees function down below
-// call the findEmployees function from the Database class that we created

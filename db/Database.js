@@ -10,12 +10,14 @@ class Database {
   }
 
   viewEmployees() {
-    this.connection.query("SELECT * FROM employees", (err, result) => {
-      if (err) throw err;
-      result.forEach((row) => {
-        console.log(row.first_name, row.last_name);
-      });
-    });
+    this.connection.query(
+      "SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager_id from employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id)",
+      (err, result) => {
+        if (err) throw err;
+        console.table(result);
+      }
+      
+    );
   }
 
   createDepartments() {
