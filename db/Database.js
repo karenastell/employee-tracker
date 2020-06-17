@@ -10,15 +10,12 @@ class Database {
   }
 
   viewEmployees() {
-   this.connection.query("SELECT * FROM employees", (err, result)=>{
-     if(err) throw err;
-     result.forEach((row)=>{
-       console.log(row.first_name, row.last_name);
-       
-     })
-
-   })
-
+    this.connection.query("SELECT * FROM employees", (err, result) => {
+      if (err) throw err;
+      result.forEach((row) => {
+        console.log(row.first_name, row.last_name);
+      });
+    });
   }
 
   createDepartments() {
@@ -49,6 +46,11 @@ class Database {
   }
   updateRole() {
     return this.connection.query(SELECT);
+  }
+
+  quitApp() {
+    console.log("Thanks for Searching!", "\n", "See ya!");
+    this.connection.end();
   }
 }
 

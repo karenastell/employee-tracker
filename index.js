@@ -1,9 +1,9 @@
 const inquirer = require("inquirer");
 const Database = require("./db/Database");
 const cTable = require("console.table");
+const connection = require("./db/connection");
 const db = new Database();
 
-// db.viewEmployees();
 
 // inquirer questions on start
 const startQuestionsArray = [
@@ -20,6 +20,7 @@ const startQuestionsArray = [
       "Update Employee Role",
       "Update Employee Manager",
       "View All Roles",
+      "Quit",
     ],
   },
 ];
@@ -39,16 +40,7 @@ const addEmployeeArray = [
     type: "list",
     name: "role",
     message: "What is the empolyee's role?",
-    choices: [
-      "Sales Lead",
-      "Salesperson",
-      "Lead Engineer",
-      "Software Engineer",
-      "Account Manager",
-      "Accountant",
-      "Legal Team Lead",
-      "Lawyer",
-    ],
+    choices: [],
   },
   {
     type: "list",
@@ -58,6 +50,7 @@ const addEmployeeArray = [
   },
 ];
 
+// ask the user what they want to do and execute the cooresponding function
 const startApp = () => {
   inquirer.prompt(startQuestionsArray).then((answer) => {
     if (answer.choice === "View All Employees") {
@@ -69,6 +62,8 @@ const startApp = () => {
     } else if (answer.choice === "Update Employee Role") {
     } else if (answer.choice === "Update Employee Manager") {
     } else if (answer.choice === "View All Roles") {
+    } else {
+      db.quitApp();
     }
   });
 };

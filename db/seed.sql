@@ -1,14 +1,14 @@
 INSERT INTO employees
-(first_name, last_name)
+(first_name, last_name, role_id, manager_id)
 VALUES
-("Karen", "Astell"), ("Heidi", "Katz"), ("Kaleigh", "Spurio"), ("Brian", "Astell");
+("Karen", "Astell", 1, 2), ("Heidi", "Katz", 2, 1), ("Kaleigh", "Spurio", 3, 2), ("Brian", "Astell", 4, 3);
 
 INSERT INTO roles
-(title, salary)
+(title, salary, department_id)
 VALUES
-("Software Engineer", 70000), ("Lead Engineer", 100000), ("Lawyer", 120000), ("Salesperson", 85000);
+("Software Engineer", 70000, 1), ("Lead Engineer", 100000, 1), ("Lawyer", 120000, 2), ("Salesperson", 85000, 3);
 
 INSERT INTO departments
 (name)
 VALUES
-("Engineering"), ("Engineering"), ("Legal"), ("Sales");
+("Engineering"), ("Legal"), ("Sales");
