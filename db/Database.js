@@ -20,36 +20,74 @@ class Database {
     );
   }
 
-  createDepartments() {
-    return this.connection.query("SELECT");
-  }
-  createEmployee() {
-    return this.connection.query(SELECT);
-  }
-  createRole() {
-    return this.connection.query(SELECT);
+  employeesByDepartment(){
+    this.connection.query("SELECT", (err, result)=>{
+      if(err) throw err;
+      console.table(result);
+    })
+
   }
 
-  findDepartment() {
-    return this.connection.query(SELECT);
+  employeesByRole(){
+    this.connection.query("SELECT", (err, result)=>{
+      if(err) throw err;
+      console.table(result);
+    })
   }
-  findEmployee() {
-    return this.connection.query(SELECT);
+  employeesByManager(){
+    this.connection.query("SELECT", (err, result)=>{
+      if(err) throw err;
+      console.table(result);
+    })
   }
-  findRole() {
-    return this.connection.query(SELECT);
+  addEmployee(){
+    this.connection.query("SELECT", (err, result)=>{
+      if(err) throw err;
+      console.table(result);
+    })
+  }
+ 
+  addRole(){
+    this.connection.query("SELECT", (err, result)=>{
+      if(err) throw err;
+      console.table(result);
+    })
   }
 
-  updateDepartment() {
-    return this.connection.query(SELECT);
-  }
-  updateEmployee() {
-    return this.connection.query(SELECT);
-  }
-  updateRole() {
-    return this.connection.query(SELECT);
+  addDepartment(){
+    this.connection.query("SELECT", (err, result)=>{
+      if(err) throw err;
+      console.table(result);
+    })
   }
 
+  removeEmployee(){
+    this.connection.query("SELECT", (err, result)=>{
+      if(err) throw err;
+      console.table(result);
+    })
+  }
+
+  updateRole(){
+    this.connection.query("SELECT", (err, result)=>{
+      if(err) throw err;
+      console.table(result);
+    })
+  }
+
+  updateManager(){
+    this.connection.query("SELECT", (err, result)=>{
+      if(err) throw err;
+      console.table(result);
+    })
+  }
+
+  viewAllRoles(){
+    this.connection.query("SELECT", (err, result)=>{
+      if(err) throw err;
+      console.table(result);
+    })
+  }
   quitApp() {
     console.log("Thanks for Searching!", "\n", "See ya!");
     this.connection.end();

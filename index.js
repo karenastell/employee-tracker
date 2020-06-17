@@ -4,7 +4,6 @@ const Database = require("./db/Database");
 // const connection = require("./db/connection");
 const db = new Database();
 
-
 // inquirer questions on start
 const startQuestionsArray = [
   {
@@ -14,8 +13,11 @@ const startQuestionsArray = [
     choices: [
       "View All Employees",
       "View All Employees By Department",
+      "View All Employees By Role",
       "View all Employees By Manager",
       "Add Employee",
+      "Add Role",
+      "Add Department",
       "Remove Employee",
       "Update Employee Role",
       "Update Employee Manager",
@@ -56,17 +58,30 @@ const startApp = () => {
     if (answer.choice === "View All Employees") {
       db.viewEmployees();
     } else if (answer.choice === "View All Employees By Department") {
+      db.employeesByDepartment();
+    } else if (answer.choice === "View All Employees By Role") {
+      db.employeesByRole();
     } else if (answer.choice === "View All Employees By Manager") {
+      db.employeesByManager();
     } else if (answer.choice === "Add Employee") {
+      db.addEmployee();
+    } else if (answer.choice === "Add Role") {
+      db.addRole();
+    } else if (answer.choice === "Add Department") {
+      db.addDepartment();
     } else if (answer.choice === "Remove Employee") {
+      db.removeEmployee();
     } else if (answer.choice === "Update Employee Role") {
+      db.updateRole();
     } else if (answer.choice === "Update Employee Manager") {
+      db.updateManager();
     } else if (answer.choice === "View All Roles") {
+      db.viewAllRoles();
     } else {
       db.quitApp();
     }
+    startApp();
   });
 };
 
 startApp();
-
