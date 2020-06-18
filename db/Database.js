@@ -58,8 +58,19 @@ class Database {
           })
           .then((answer) => {
             console.log(answer);
+
+            this.connection.query(`SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager_id FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE departments.department =?`, [answer.choice], (err, result)=>{
+              if(err) throw err;
+              console.log("answer.choice: ", answer.choice);
+              
+              // console.log("roles.title", title);
+              
+              console.table(result)
+            })
+            
           });
       }
+      
     );
   }
 
@@ -92,39 +103,40 @@ class Database {
     });
   }
   addEmployee() {
+   
+    this.connection.query("SELECT", (err, result) => {
+      if (err) throw err;
+      console.table(result);
     inquirer
-      .prompt([
-        {
-          type: "input",
-          name: "first_name",
-          message: "What Is The Employee's First Name?",
-        },
-        {
-          type: "input",
-          name: "last_name",
-          message: "What Is The Employee's Last Name?",
-        },
-        {
-          type: "choice",
-          name: "manager_id",
-          message: "Who Is The Employee's Manager?",
-          choices: ["choice 1", "choice 2", "choice 3"],
-        },
-        {
-          type: "choice",
-          name: "title",
-          message: "What Is The Employee's Role?",
-          choices: ["choice 1", "choice 2", "choice 3"],
-        },
-      ])
-      .then((answers) => {
-        console.log(answers);
-      });
+    .prompt([
+      {
+        type: "input",
+        name: "first_name",
+        message: "What Is The Employee's First Name?",
+      },
+      {
+        type: "input",
+        name: "last_name",
+        message: "What Is The Employee's Last Name?",
+      },
+      {
+        type: "choice",
+        name: "manager_id",
+        message: "Who Is The Employee's Manager?",
+        choices: ["choice 1", "choice 2", "choice 3"],
+      },
+      {
+        type: "choice",
+        name: "title",
+        message: "What Is The Employee's Role?",
+        choices: ["choice 1", "choice 2", "choice 3"],
+      },
+    ])
+    .then((answers) => {
+      console.log(answers);
+    });
 
-    // this.connection.query("SELECT", (err, result) => {
-    //   if (err) throw err;
-    //   console.table(result);
-    // });
+    });
   }
 
   addRole() {
