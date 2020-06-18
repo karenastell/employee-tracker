@@ -69,7 +69,7 @@ const startApp =  () => {
       db.employeesByDepartment();
     } else if (answer.choice === "View All Employees By Role") {
       db.employeesByRole();
-    } else if (answer.choice === "View All Employees By Manager") {
+    } else if (answer.choice === "View all Employees By Manager") {
       db.employeesByManager();
     } else if (answer.choice === "Add Employee") {
       db.addEmployee();
@@ -83,7 +83,7 @@ const startApp =  () => {
       db.updateRole();
     } else if (answer.choice === "Update Employee Manager") {
       db.updateManager();
-    } else if (answer.choice === "View All Roles") {
+    } else if (answer.choice === "View All Employees By Role") {
       db.viewAllRoles();
     } else {
       db.quitApp();

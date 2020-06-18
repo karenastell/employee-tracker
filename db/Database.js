@@ -59,18 +59,20 @@ class Database {
           .then((answer) => {
             console.log(answer);
 
-            this.connection.query(`SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager_id FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE departments.department =?`, [answer.choice], (err, result)=>{
-              if(err) throw err;
-              console.log("answer.choice: ", answer.choice);
-              
-              // console.log("roles.title", title);
-              
-              console.table(result)
-            })
-            
+            this.connection.query(
+              `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager_id FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE departments.department =?`,
+              [answer.choice],
+              (err, result) => {
+                if (err) throw err;
+                console.log("answer.choice: ", answer.choice);
+
+                // console.log("roles.title", title);
+
+                console.table(result);
+              }
+            );
           });
       }
-      
     );
   }
 
@@ -79,7 +81,6 @@ class Database {
       if (err) throw err;
       const list = [];
       result.forEach((item) => {
-        // console.log(department.department);
         list.push(item.title);
       });
 
@@ -92,58 +93,112 @@ class Database {
         })
         .then((answer) => {
           console.log(answer);
+
+          this.connection.query(
+            `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager_id FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE roles.title =?`,
+            [answer.choice],
+            (err, result) => {
+              if (err) throw err;
+              console.log("answer.choice: ", answer.choice);
+
+              // console.log("roles.title", title);
+
+              console.table(result);
+            }
+          );
         });
     });
   }
 
   employeesByManager() {
-    this.connection.query("SELECT ", (err, result) => {
+    // filter through list to only show one choice per manager
+    this.connection.query(`SELECT manager_id FROM employees`, (err, result) => {
       if (err) throw err;
-      console.table(result);
+      const list = [];
+      result.forEach((item) => {
+        // console.log(department.department);
+        list.push(item.manager_id);
+      });
+
+      inquirer
+        .prompt({
+          type: "list",
+          name: "choice",
+          message: "Which Manager:",
+          choices: list,
+        })
+        .then((answer) => {
+          console.log(answer);
+
+          this.connection.query(
+            `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager_id FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE employees.manager_id =?`,
+            [answer.choice],
+            (err, result) => {
+              if (err) throw err;
+              console.log("answer.choice: ", answer.choice);
+
+              console.table(result);
+            }
+          );
+        });
     });
   }
   addEmployee() {
-   
-    this.connection.query("SELECT", (err, result) => {
-      if (err) throw err;
-      console.table(result);
-    inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "first_name",
-        message: "What Is The Employee's First Name?",
-      },
-      {
-        type: "input",
-        name: "last_name",
-        message: "What Is The Employee's Last Name?",
-      },
-      {
-        type: "choice",
-        name: "manager_id",
-        message: "Who Is The Employee's Manager?",
-        choices: ["choice 1", "choice 2", "choice 3"],
-      },
-      {
-        type: "choice",
-        name: "title",
-        message: "What Is The Employee's Role?",
-        choices: ["choice 1", "choice 2", "choice 3"],
-      },
-    ])
-    .then((answers) => {
-      console.log(answers);
-    });
+    this.connection.query(
+      `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager_id FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id)`,
+      (err, result) => {
+        if (err) throw err;
 
-    });
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "first_name",
+              message: "What Is The Employee's First Name?",
+            },
+            {
+              type: "input",
+              name: "last_name",
+              message: "What Is The Employee's Last Name?",
+            },
+            {
+              type: "choice",
+              name: "manager_id",
+              message: "Who Is The Employee's Manager?",
+              choices: ["choice 1", "choice 2", "choice 3"],
+            },
+            {
+              type: "choice",
+              name: "title",
+              message: "What Is The Employee's Role?",
+              choices: ["choice 1", "choice 2", "choice 3"],
+            },
+          ])
+          .then((answers) => {
+            console.log(answers);
+          });
+      }
+    );
   }
 
   addRole() {
-    this.connection.query("SELECT", (err, result) => {
-      if (err) throw err;
-      console.table(result);
-    });
+    inquirer
+      .prompt({
+        type: "input",
+        name: "role",
+        message: "What Role Would You Like To Add?",
+      },
+      {
+        type: "input",
+        name: "salary",
+        message: "What Is The Salary For This Role?"
+      })
+      .then((answer) => {
+        this.connection.query(`INSERT INTO roles(title, salary) VALUES (?, ?)`, [answer.role, answer.salary], (err, result) => {
+          if (err) throw err;
+          console.table(result);
+        });
+      });
   }
 
   addDepartment() {
