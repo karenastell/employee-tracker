@@ -27,6 +27,9 @@ const startQuestionsArray = [
   },
 ];
 
+
+
+
 const addEmployeeArray = [
   {
     type: "input",
@@ -53,11 +56,16 @@ const addEmployeeArray = [
 ];
 
 // ask the user what they want to do and execute the cooresponding function
-const startApp = () => {
+const startApp =  () => {
   inquirer.prompt(startQuestionsArray).then((answer) => {
     if (answer.choice === "View All Employees") {
       db.viewEmployees();
+     
     } else if (answer.choice === "View All Employees By Department") {
+        // inquirer.prompt(viewByDepartmentArray).then((answer)=>{
+        //     console.log(answer);
+            
+        // })
       db.employeesByDepartment();
     } else if (answer.choice === "View All Employees By Role") {
       db.employeesByRole();
@@ -80,7 +88,7 @@ const startApp = () => {
     } else {
       db.quitApp();
     }
-    startApp();
+    
   });
 };
 

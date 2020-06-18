@@ -1,12 +1,9 @@
 const connection = require("./connection");
+const inquirer = require("inquirer");
 
 class Database {
   constructor() {
     this.connection = connection;
-  }
-
-  testFunction() {
-    console.log("connected to Database.js");
   }
 
   viewEmployees() {
@@ -16,77 +13,132 @@ class Database {
         if (err) throw err;
         console.table(result);
       }
-      
     );
   }
 
-  employeesByDepartment(){
-    this.connection.query("SELECT", (err, result)=>{
-      if(err) throw err;
-      console.table(result);
-    })
-
+  viewBy(column, table, message) {
+    this.connection.query(`SELECT ${column} FROM ${table}`, (err, result) => {
+      if (err) throw err;
+      const list = [];
+      result.forEach((item) => {
+        // console.log(department.department);
+        list.push(item.column);
+      });
+      inquirer
+        .prompt({
+          type: "list",
+          name: "choice",
+          message: `Which ${message}:`,
+          choices: list,
+        })
+        .then((answer) => {
+          console.log(answer);
+        });
+    });
   }
 
-  employeesByRole(){
-    this.connection.query("SELECT", (err, result)=>{
-      if(err) throw err;
-      console.table(result);
-    })
-  }
-  employeesByManager(){
-    this.connection.query("SELECT", (err, result)=>{
-      if(err) throw err;
-      console.table(result);
-    })
-  }
-  addEmployee(){
-    this.connection.query("SELECT", (err, result)=>{
-      if(err) throw err;
-      console.table(result);
-    })
-  }
- 
-  addRole(){
-    this.connection.query("SELECT", (err, result)=>{
-      if(err) throw err;
-      console.table(result);
-    })
+  employeesByDepartment() {
+    // this.viewBy(department, departments, Department)
+    this.connection.query(
+      `SELECT department FROM departments`,
+      (err, result) => {
+        if (err) throw err;
+        const list = [];
+        result.forEach((item) => {
+          // console.log(department.department);
+          list.push(item.department);
+        });
+
+        inquirer
+          .prompt({
+            type: "list",
+            name: "choice",
+            message: "Which Department:",
+            choices: list,
+          })
+          .then((answer) => {
+            console.log(answer);
+          });
+      }
+    );
   }
 
-  addDepartment(){
-    this.connection.query("SELECT", (err, result)=>{
-      if(err) throw err;
-      console.table(result);
-    })
+  employeesByRole() {
+    this.connection.query(`SELECT title FROM roles`, (err, result) => {
+      if (err) throw err;
+      const list = [];
+      result.forEach((item) => {
+        // console.log(department.department);
+        list.push(item.title);
+      });
+
+      inquirer
+        .prompt({
+          type: "list",
+          name: "choice",
+          message: "Which Role:",
+          choices: list,
+        })
+        .then((answer) => {
+          console.log(answer);
+         
+        });
+    });
   }
 
-  removeEmployee(){
-    this.connection.query("SELECT", (err, result)=>{
-      if(err) throw err;
+  employeesByManager() {
+    this.connection.query("SELECT", (err, result) => {
+      if (err) throw err;
       console.table(result);
-    })
+    });
+  }
+  addEmployee() {
+    this.connection.query("SELECT", (err, result) => {
+      if (err) throw err;
+      console.table(result);
+    });
   }
 
-  updateRole(){
-    this.connection.query("SELECT", (err, result)=>{
-      if(err) throw err;
+  addRole() {
+    this.connection.query("SELECT", (err, result) => {
+      if (err) throw err;
       console.table(result);
-    })
+    });
   }
 
-  updateManager(){
-    this.connection.query("SELECT", (err, result)=>{
-      if(err) throw err;
+  addDepartment() {
+    this.connection.query("SELECT", (err, result) => {
+      if (err) throw err;
       console.table(result);
-    })
+    });
   }
 
-  viewAllRoles(){
-    this.connection.query("SELECT", (err, result)=>{
-      if(err) throw err;
+  removeEmployee() {
+    this.connection.query("SELECT", (err, result) => {
+      if (err) throw err;
       console.table(result);
-    })
+    });
+  }
+
+  updateRole() {
+    this.connection.query("SELECT", (err, result) => {
+      if (err) throw err;
+      console.table(result);
+    });
+  }
+
+  updateManager() {
+    this.connection.query("SELECT", (err, result) => {
+      if (err) throw err;
+      console.table(result);
+    });
+  }
+
+  viewAllRoles() {
+    this.connection.query("SELECT", (err, result) => {
+      if (err) throw err;
+      console.table(result);
+    });
   }
   quitApp() {
     console.log("Thanks for Searching!", "\n", "See ya!");
