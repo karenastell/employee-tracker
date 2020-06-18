@@ -191,8 +191,8 @@ class Database {
       console.log(list);
       // role is going in, why won't it ask the other questions?
       inquirer
-        .prompt(
-          {
+        .prompt([
+           {
             type: "input",
             name: "role",
             message: "What Role Would You Like To Add?",
@@ -208,6 +208,8 @@ class Database {
             message: "What Department Is This Role Associated With?",
             choices: list,
           }
+        ]
+         
         )
         .then((answer) => {
           this.connection.query(
@@ -215,7 +217,7 @@ class Database {
             [answer.role, answer.salary, answer.department_id],
             (err, result) => {
               if (err) throw err;
-              console.log(result);
+              console.log(answer);
             }
           );
         });
@@ -228,7 +230,7 @@ class Database {
       name: "department",
       message: "What Department Would You Like To Add?",
     }).then((answer)=>{
-      console.log(department);
+      console.log(answer.department);
       
       this.connection.query(
       "INSERT INTO departments (department) VALUES (?)",[answer.department],
