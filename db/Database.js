@@ -8,7 +8,7 @@ class Database {
 
   viewEmployees() {
     this.connection.query(
-      "SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager_id from employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id)",
+      "SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager from employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id)",
       (err, result) => {
         if (err) throw err;
         console.table(result);
@@ -61,7 +61,7 @@ class Database {
             console.log(answer);
 
             this.connection.query(
-              `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager_id FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE departments.department =?`,
+              `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE departments.department =?`,
               [answer.choice],
               (err, result) => {
                 if (err) throw err;
@@ -96,7 +96,7 @@ class Database {
           console.log(answer);
 
           this.connection.query(
-            `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager_id FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE roles.title =?`,
+            `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE roles.title =?`,
             [answer.choice],
             (err, result) => {
               if (err) throw err;
@@ -114,12 +114,12 @@ class Database {
   // optional
   employeesByManager() {
     // filter through list to only show one choice per manager
-    this.connection.query(`SELECT manager_id FROM employees`, (err, result) => {
+    this.connection.query(`SELECT manager FROM employees`, (err, result) => {
       if (err) throw err;
       const list = [];
       result.forEach((item) => {
         // console.log(department.department);
-        list.push(item.manager_id);
+        list.push(item.manager);
       });
 
       inquirer
@@ -133,7 +133,7 @@ class Database {
           console.log(answer);
 
           this.connection.query(
-            `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager_id FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE employees.manager_id =?`,
+            `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE employees.manager =?`,
             [answer.choice],
             (err, result) => {
               if (err) throw err;
@@ -147,7 +147,7 @@ class Database {
   }
   addEmployee() {
     this.connection.query(
-      `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager_id FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id)`,
+      `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id)`,
       (err, result) => {
         if (err) throw err;
 
@@ -165,7 +165,7 @@ class Database {
             },
             {
               type: "choice",
-              name: "manager_id",
+              name: "manager",
               message: "Who Is The Employee's Manager?",
               choices: ["choice 1", "choice 2", "choice 3"],
             },
