@@ -16,6 +16,7 @@ class Database {
     );
   }
 
+  // reusable function - not working so far
   viewBy(column, table, message) {
     this.connection.query(`SELECT ${column} FROM ${table}`, (err, result) => {
       if (err) throw err;
@@ -219,15 +220,15 @@ class Database {
           ])
           .then((answer) => {
             let id;
-            departmentList.forEach((item)=>{
-              if(item.department === answer.department){
+            departmentList.forEach((item) => {
+              if (item.department === answer.department) {
                 id = item.id;
               }
-            })
+            });
             console.log(id);
-            
+
             console.log(answer);
-            
+
             this.connection.query(
               `INSERT INTO roles(title, salary, department_id) VALUES (?, ?, ?)`,
               [answer.role, answer.salary, id],
@@ -240,8 +241,6 @@ class Database {
       }
     );
   }
-
- 
 
   addDepartment() {
     const departmentsArray = [];
@@ -262,21 +261,25 @@ class Database {
         message: "What Department Would You Like To Add?",
       })
       .then((answer) => {
-        departmentsArray.forEach((department) => {
-          if (answer.department === department) {
-            console.log(`The ${answer.department} already exists.`);
-            // return does not work
-            return;
-          }
-        });
-        this.connection.query(
-          "INSERT INTO departments (department) VALUES (?)",
-          [answer.department],
-          (err, result) => {
-            if (err) throw err;
-            console.log(`Department ${answer.department} has been added.`);
-          }
-        );
+          departmentsArray
+
+        // departmentsArray.forEach((department) => {
+        //   if (answer.department === department) {
+        //    console.log(`The ${answer.department} already exists.`);
+        //    return;
+        //   } 
+          
+        //   else if (answer.department != department) {
+        //     this.connection.query(
+        //       "INSERT INTO departments (department) VALUES (?)",
+        //       [answer.department],
+        //       (err, result) => {
+        //         if (err) throw err;
+        //         console.log(`Department ${answer.department} has been added.`);
+        //       }
+        //     );
+        //   }
+        // });
       });
   }
 
