@@ -182,91 +182,113 @@ class Database {
   }
 
   addRole() {
-    this.connection.query(`SELECT department_id FROM roles`, (err, result) => {
-      if (err) throw err;
-      const list = [];
-      result.forEach((row) => {
-        list.push(row.department_id);
-      });
-      console.log(list);
-      // role is going in, why won't it ask the other questions?
-      inquirer
-        .prompt([
-           {
-            type: "input",
-            name: "role",
-            message: "What Role Would You Like To Add?",
-          },
-          {
-            type: "input",
-            name: "salary",
-            message: "What Is The Salary For This Role?",
-          },
-          {
-            type: "list",
-            name: "department_id",
-            message: "What Department Is This Role Associated With?",
-            choices: list,
-          }
-        ]
-         
-        )
-        .then((answer) => {
-          this.connection.query(
-            `INSERT INTO roles(title, salary, department_id) VALUES (?, ?, ?)`,
-            [answer.role, answer.salary, answer.department_id],
-            (err, result) => {
-              if (err) throw err;
-              console.log(answer);
-            }
-          );
-        });
-    });
-  }
-
-  addDepartment() {
-    inquirer.prompt({
-      type: "input",
-      name: "department",
-      message: "What Department Would You Like To Add?",
-    }).then((answer)=>{
-      console.log(answer.department);
-      
-      this.connection.query(
-      "INSERT INTO departments (department) VALUES (?)",[answer.department],
+    this.connection.query(
+      `SELECT department FROM departments`,
       (err, result) => {
         if (err) throw err;
-        console.log(`Department ${answer.department} has been added.`);
-        
+        const departmentList = [];
+        result.forEach((department) => {
+          departmentList.push(department);
+        });
+        console.log("department list ", departmentList);
+        const departmentsArray = [];
+        departmentList.forEach((department) => {
+          departmentsArray.push(department.department);
+        });
+        console.log(departmentsArray);
+
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "role",
+              message: "What Role Would You Like To Add?",
+            },
+            {
+              type: "input",
+              name: "salary",
+              message: "What Is The Salary For This Role?",
+            },
+            {
+              type: "list",
+              name: "department",
+              message: "What Department Is This Role Associated With?",
+              choices: departmentsArray,
+            },
+          ])
+          .then((answer) => {
+            console.log(answer);
+          });
       }
     );
-    });
-    
   }
 
-  removeEmployee() {
-    this.connection.query("SELECT id, first_name, last_name FROM employees", (err, result) => {
-      if (err) throw err;
-      const list = [];
-      result.forEach((employee)=>{
-        list.push({id: employee.id, first_name: employee.first_name, last_name: employee.last_name})
+  // this.connection.query(
+  //   `INSERT INTO roles(title, salary, department_id) VALUES (?, ?, ?)`,
+  //   [answer.role, answer.salary, answer.department_id],
+  //   (err, result) => {
+  //     if (err) throw err;
+  //     console.log(answer);
+  //   }
+  // );
+
+  //     }
+  //   );
+  // }
+
+  addDepartment() {
+    const departmentsArray = [];
+    this.connection.query(
+      `SELECT department FROM departments`,
+      (err, result) => {
+        if (err) throw err;
+        result.forEach((department) => {
+          departmentsArray.push(department.department);
+        });
+        console.log(departmentsArray);
+      }
+    );
+    inquirer
+      .prompt({
+        type: "input",
+        name: "department",
+        message: "What Department Would You Like To Add?",
       })
-     console.log(list);
-      const name = [];
-     list.forEach((person)=>{
-      
-     })
-    });
+      .then((answer) => {
+        departmentsArray.forEach((department) => {
+          if (answer.department === department) {
+            console.log(`The ${answer.department} already exists.`);
+            // return does not work
+            return;
+          }
+        });
+        this.connection.query(
+          "INSERT INTO departments (department) VALUES (?)",
+          [answer.department],
+          (err, result) => {
+            if (err) throw err;
+            console.log(`Department ${answer.department} has been added.`);
+          }
+        );
+      });
   }
 
-  updateRole() {
-    this.connection.query("SELECT", (err, result) => {
-      if (err) throw err;
-      console.table(result);
-    });
-  }
+  // removeEmployee() {
+  //   this.connection.query("SELECT id, first_name, last_name FROM employees", (err, result) => {
+  //     if (err) throw err;
+  //     const list = [];
+  //     result.forEach((employee)=>{
+  //       list.push({id: employee.id, first_name: employee.first_name, last_name: employee.last_name})
+  //     })
+  //    console.log(list);
+  //     const name = [];
+  //    list.forEach((person)=>{
 
-  updateManager() {
+  //    })
+  //   });
+  // }
+
+  updateEmployee() {
     this.connection.query("SELECT", (err, result) => {
       if (err) throw err;
       console.table(result);
@@ -274,10 +296,20 @@ class Database {
   }
 
   viewAllRoles() {
-    this.connection.query("SELECT", (err, result) => {
+    this.connection.query("SELECT title FROM roles", (err, result) => {
       if (err) throw err;
       console.table(result);
     });
+  }
+
+  viewAllDepartments() {
+    this.connection.query(
+      "SELECT department FROM departments",
+      (err, result) => {
+        if (err) throw err;
+        console.table(result);
+      }
+    );
   }
   quitApp() {
     console.log("Thanks for Searching!", "\n", "See ya!");

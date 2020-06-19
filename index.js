@@ -18,17 +18,14 @@ const startQuestionsArray = [
       "Add Employee",
       "Add Role",
       "Add Department",
-      "Remove Employee",
-      "Update Employee Role",
-      "Update Employee Manager",
+      //   "Remove Employee",
+      "Update Employee Information",
       "View All Roles",
+      "View All Departments",
       "Quit",
     ],
   },
 ];
-
-
-
 
 const addEmployeeArray = [
   {
@@ -56,20 +53,19 @@ const addEmployeeArray = [
 ];
 
 // ask the user what they want to do and execute the cooresponding function
-const startApp =  () => {
+const startApp = () => {
   inquirer.prompt(startQuestionsArray).then((answer) => {
     if (answer.choice === "View All Employees") {
+        //working
       db.viewEmployees();
-     
     } else if (answer.choice === "View All Employees By Department") {
-        // inquirer.prompt(viewByDepartmentArray).then((answer)=>{
-        //     console.log(answer);
-            
-        // })
+        //working
       db.employeesByDepartment();
     } else if (answer.choice === "View All Employees By Role") {
+        // take out extra roles in array
       db.employeesByRole();
     } else if (answer.choice === "View all Employees By Manager") {
+        // add manager name
       db.employeesByManager();
     } else if (answer.choice === "Add Employee") {
       db.addEmployee();
@@ -77,18 +73,22 @@ const startApp =  () => {
       db.addRole();
     } else if (answer.choice === "Add Department") {
       db.addDepartment();
-    } else if (answer.choice === "Remove Employee") {
-      db.removeEmployee();
-    } else if (answer.choice === "Update Employee Role") {
-      db.updateRole();
-    } else if (answer.choice === "Update Employee Manager") {
-      db.updateManager();
-    } else if (answer.choice === "View All Employees By Role") {
+    }
+    // else if (answer.choice === "Remove Employee") {
+    //   db.removeEmployee();
+    // }
+    else if (answer.choice === "Update Employee Information") {
+      db.updateEmployee();
+    } else if (answer.choice === "View All Roles") {
+        // working
       db.viewAllRoles();
+    } else if (answer.choice === "View All Departments") {
+        // working
+      db.viewAllDepartments();
     } else {
+        // working
       db.quitApp();
     }
-    
   });
 };
 
