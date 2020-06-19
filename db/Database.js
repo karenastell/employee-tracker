@@ -110,6 +110,7 @@ class Database {
     });
   }
 
+  // optional
   employeesByManager() {
     // filter through list to only show one choice per manager
     this.connection.query(`SELECT manager_id FROM employees`, (err, result) => {
@@ -183,7 +184,7 @@ class Database {
 
   addRole() {
     this.connection.query(
-      `SELECT department FROM departments`,
+      `SELECT id, department FROM departments`,
       (err, result) => {
         if (err) throw err;
         const departmentList = [];
@@ -217,24 +218,30 @@ class Database {
             },
           ])
           .then((answer) => {
+            let id;
+            departmentList.forEach((item)=>{
+              if(item.department === answer.department){
+                id = item.id;
+              }
+            })
+            console.log(id);
+            
             console.log(answer);
+            
+            this.connection.query(
+              `INSERT INTO roles(title, salary, department_id) VALUES (?, ?, ?)`,
+              [answer.role, answer.salary, id],
+              (err, result) => {
+                if (err) throw err;
+                console.log("Role was Added");
+              }
+            );
           });
       }
     );
   }
 
-  // this.connection.query(
-  //   `INSERT INTO roles(title, salary, department_id) VALUES (?, ?, ?)`,
-  //   [answer.role, answer.salary, answer.department_id],
-  //   (err, result) => {
-  //     if (err) throw err;
-  //     console.log(answer);
-  //   }
-  // );
-
-  //     }
-  //   );
-  // }
+ 
 
   addDepartment() {
     const departmentsArray = [];
