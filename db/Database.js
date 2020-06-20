@@ -310,8 +310,10 @@ class Database {
   // }
 
   updateEmployeeRole() {
+    // if the role changes we need to also possibly change the department
+    // which ids will the role chanage affect: employees.role_id, roles.department_id
     this.connection.query(
-      `SELECT employees.id, employees.first_name, employees.last_name, roles.title FROM employees LEFT JOIN roles ON (employees.role_id = roles.id)`,
+      `SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.id, roles.department_id, departments.department, departments.id, roles.salary, employees.manager FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id)`,
       (err, result) => {
         if (err) throw err;
         console.table(result);
