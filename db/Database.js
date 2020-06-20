@@ -225,18 +225,33 @@ class Database {
                 id = item.id;
               }
             });
-            console.log(id);
-
-            console.log(answer);
-
-            this.connection.query(
-              `INSERT INTO roles(title, salary, department_id) VALUES (?, ?, ?)`,
-              [answer.role, answer.salary, id],
-              (err, result) => {
-                if (err) throw err;
-                console.log("Role was Added");
+            const roleArray = [];
+            this.connection.query(`SELECT title FROM roles`, (err, result) => {
+              if (err) throw err;
+              result.forEach((role) => {
+                roleArray.push(role.title);
+              });
+              console.log("Role Array", roleArray);
+              if (roleArray.includes(answer.role)) {
+                console.log(
+                  `The role ${answer.role} already exists.  Please add a different role name.`
+                );
+                this.addRole();
+              } else {
+                this.connection.query(
+                  `INSERT INTO roles(title, salary, department_id) VALUES (?, ?, ?)`,
+                  [answer.role, answer.salary, id],
+                  (err, result) => {
+                    if (err) throw err;
+                    console.log(`${answer.role} was added`);
+                  }
+                );
               }
-            );
+            });
+
+            // console.log(id);
+
+            // console.log(answer);
           });
       }
     );
@@ -251,7 +266,7 @@ class Database {
         result.forEach((department) => {
           departmentsArray.push(department.department);
         });
-        console.log(departmentsArray);
+        // console.log(departmentsArray);
       }
     );
     inquirer
@@ -261,25 +276,21 @@ class Database {
         message: "What Department Would You Like To Add?",
       })
       .then((answer) => {
-          departmentsArray
-
-        // departmentsArray.forEach((department) => {
-        //   if (answer.department === department) {
-        //    console.log(`The ${answer.department} already exists.`);
-        //    return;
-        //   } 
-          
-        //   else if (answer.department != department) {
-        //     this.connection.query(
-        //       "INSERT INTO departments (department) VALUES (?)",
-        //       [answer.department],
-        //       (err, result) => {
-        //         if (err) throw err;
-        //         console.log(`Department ${answer.department} has been added.`);
-        //       }
-        //     );
-        //   }
-        // });
+        if (departmentsArray.includes(answer.department)) {
+          console.log(
+            `${answer.department} already exisits. Please add a different department name.`
+          );
+          this.addDepartment();
+        } else {
+          this.connection.query(
+            `INSERT INTO departments (department) VALUES (?)`,
+            [answer.department],
+            (err, result) => {
+              if (err) throw err;
+              console.log(`The deparment ${answer.department} has been added.`);
+            }
+          );
+        }
       });
   }
 
@@ -298,11 +309,47 @@ class Database {
   //   });
   // }
 
-  updateEmployee() {
-    this.connection.query("SELECT", (err, result) => {
-      if (err) throw err;
-      console.table(result);
-    });
+  updateEmployeeRole() {
+    this.connection.query(
+      `SELECT employees.id, employees.first_name, employees.last_name, roles.title FROM employees LEFT JOIN roles ON (employees.role_id = roles.id)`,
+      (err, result) => {
+        if (err) throw err;
+        console.table(result);
+        const roleArray = [];
+        const firstLastArray = [];
+        const idFirstLastArray = [];
+        result.forEach((row)=>{
+          roleArray.push(row.title);
+          idFirstLastArray.push({
+            id: row.id,
+            first: row.first_name,
+            last: row.last_name});
+firstLastArray.push(row.first_name + " " + row.last_name)
+        })
+        console.log(firstLastArray);
+        // console.log(roleArray);
+        console.log(idFirstLastArray);
+        
+        inquirer.prompt([
+          {
+            type: "list",
+            name: "employee",
+            message: "Which Employee Would You Like To Update?",
+            choices: firstLastArray,
+          },
+          {
+            type: "list",
+            name: "newRole",
+            message: "Which Role Does This Employee Now Have?",
+            choices: roleArray
+          }
+        ]).then((answers)=>{
+          console.log(answers);
+          
+          this.connection.query(``)
+        });
+      }
+    );
   }
 
   viewAllRoles() {

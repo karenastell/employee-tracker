@@ -4,31 +4,10 @@ const Database = require("./db/Database");
 // const connection = require("./db/connection");
 const db = new Database();
 
-// inquirer questions on start
-const startQuestionsArray = [
-  {
-    type: "list",
-    name: "choice",
-    message: "What would you like to do?",
-    choices: [
-      "View All Employees",
-      "View All Employees By Department",
-      "View All Employees By Role",
-      "View all Employees By Manager",
-      "Add Employee",
-      "Add Role",
-      "Add Department",
-      //   "Remove Employee",
-      "Update Employee Information",
-      "View All Roles",
-      "View All Departments",
-      "Quit",
-    ],
-  },
-];
+
 
 // ask the user what they want to do and execute the cooresponding function
-async function startApp() {
+const startApp =()=> {
   inquirer
     .prompt([
       {
@@ -44,15 +23,14 @@ async function startApp() {
           "Add Role",
           "Add Department",
           //   "Remove Employee",
-          "Update Employee Information",
+          "Update Employee Role",
           "View All Roles",
           "View All Departments",
           "Quit",
         ],
       },
     ])
-    .then(
-      await function (answer) {
+    .then((answer) =>{
         if (answer.choice === "View All Employees") {
           //working
           db.viewEmployees();
@@ -75,8 +53,8 @@ async function startApp() {
         // else if (answer.choice === "Remove Employee") {
         //   db.removeEmployee();
         // }
-        else if (answer.choice === "Update Employee Information") {
-          db.updateEmployee();
+        else if (answer.choice === "Update Employee Role") {
+          db.updateEmployeeRole();
         } else if (answer.choice === "View All Roles") {
           // working
           db.viewAllRoles();
