@@ -320,12 +320,10 @@ this.connection.query(`SELECT * FROM roles; SELECT * FROM employees;`, (err, res
     firstLastNames.push(`${name.first_name} ${name.last_name}`);
 idFirstLast.push({
   id: name.id,
-  first_name: name.first_name,
-  last_name: name.last_name
+  first_name: name.first_name + " " + name.last_name
 })
   })
   console.log(idFirstLast);
-  
   console.log(firstLastNames);
   result[0].forEach((role)=>{
     roleNames.push(role.title);
@@ -353,10 +351,18 @@ idFirstLast.push({
 
     const newRoleID = findRole.id;
     console.log(newRoleID);
-    
 
+    const findEmployee = idFirstLast.find(employee => employee.first_name === answers.employee);
 
+    console.log(findEmployee);
+    const employeeID = findEmployee.id;
 
+this.connection.query(`UPDATE employees SET role_id = ? WHERE id = ?`, [newRoleID, employeeID], (err)=>{
+  if(err)throw err;
+  console.log(`${answers.employee} has a new role of ${answers.newRole}`);
+  
+})
+  
     // UPDATE employees SET role_id = ? WHERE id = ?
     
     
