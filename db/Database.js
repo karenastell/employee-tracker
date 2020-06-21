@@ -313,6 +313,17 @@ class Database {
 this.connection.query(`SELECT * FROM roles; SELECT * FROM employees;`, (err, result) =>{
   if(err)throw err;
   console.log("result: ", result);
+  const firstLastNames = [];
+  const roleNames = [];
+  result[1].forEach((name)=>{
+    firstLastNames.push(`${name.first_name} ${name.last_name}`)
+  })
+  console.log(firstLastNames);
+  result[0].forEach((role)=>{
+    roleNames.push(role.title);
+  })
+  console.log(roleNames);
+  
   
 })
   }
