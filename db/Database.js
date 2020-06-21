@@ -309,7 +309,16 @@ class Database {
   //   });
   // }
 
-  updateEmployeeRole() {
+  updateEmployeeRole(){
+this.connection.query(`SELECT * FROM roles; SELECT * FROM employees;`, (err, result) =>{
+  if(err)throw err;
+  console.log("result: ", result);
+  
+})
+  }
+
+
+  reupdateEmployeeRole() {
 // update role_id to match the new role title/id
 
     // if the role changes we need to also possibly change the department
@@ -320,21 +329,20 @@ class Database {
     // ask which department this new role is in
     // update the roles.title, employees.role.id, roles.department_id
     this.connection.query(
-      `SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.id, FROM employees LEFT JOIN roles ON (employees.role_id = roles.id)`,
+      `SELECT * FROM roles`, `SELECT * FROM employees`),
       (err, result) => {
         if (err) throw err;
-        console.table(result);
-        const roleArray = [];
-        const firstLastArray = [];
-        const idFirstLastArray = [];
-        result.forEach((row)=>{
-          roleArray.push(row.title);
-          idFirstLastArray.push({
-            id: row.id,
-            first: row.first_name,
-            last: row.last_name});
-          firstLastArray.push(row.first_name + " " + row.last_name)
-        })
+        console.log(result);
+        // const roleArray = [];
+        // const firstLastArray = [];
+        // const idFirstLastArray = [];
+        // result.forEach((row)=>{
+        //   roleArray.push(row.title);
+        //   idFirstLastArray.push({
+        //     id: row.id,
+        //    name: row.first_name + " " + row.last_name});
+        //   firstLastArray.push(row.first_name + " " + row.last_name)
+        // })
         // console.log(firstLastArray);
         // console.log(roleArray);
         // console.log(idFirstLastArray);
@@ -354,13 +362,18 @@ class Database {
           }
         ]).then((answers)=>{
           console.log(answers);
-      
-          idFirstLastArray.filter(empployee)
+          console.log("answers.employee", answers.employee);
           
-          this.connection.query(`UPDATE employees SET role_id = ? WHERE id = ?` [])
+  //         const employeesRoleId = idFirstLastArray.find((name)=> {
+  //           name.name === answers.employee;
+  //         })
+    
+  // console.log("find: ", employeesRoleId);
+  
+          // this.connection.query(`UPDATE employees SET role_id = ? WHERE id = ?` [])
         });
       }
-    );
+    ;
   }
 
   viewAllRoles() {
