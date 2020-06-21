@@ -314,15 +314,53 @@ this.connection.query(`SELECT * FROM roles; SELECT * FROM employees;`, (err, res
   if(err)throw err;
   console.log("result: ", result);
   const firstLastNames = [];
+  const idFirstLast = [];
   const roleNames = [];
   result[1].forEach((name)=>{
-    firstLastNames.push(`${name.first_name} ${name.last_name}`)
+    firstLastNames.push(`${name.first_name} ${name.last_name}`);
+idFirstLast.push({
+  id: name.id,
+  first_name: name.first_name,
+  last_name: name.last_name
+})
   })
+  console.log(idFirstLast);
+  
   console.log(firstLastNames);
   result[0].forEach((role)=>{
     roleNames.push(role.title);
   })
   console.log(roleNames);
+
+  inquirer.prompt([
+    {
+      type: "list",
+      name: "employee",
+      message: "Which Employee Would You Like To Update?",
+      choices: firstLastNames,
+    },
+    {
+      type: "list",
+      name: "newRole",
+      message: "Which Role Does This Employee Now Have?",
+      choices: roleNames
+    }
+  ]).then((answers)=>{
+    console.log(answers);
+
+    const findRole = result[0].find(role => role.title === answers.newRole);
+    console.log(findRole);
+
+    const newRoleID = findRole.id;
+    console.log(newRoleID);
+    
+
+
+
+    // UPDATE employees SET role_id = ? WHERE id = ?
+    
+    
+  })
   
   
 })
