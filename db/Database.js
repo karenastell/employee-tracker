@@ -310,10 +310,17 @@ class Database {
   // }
 
   updateEmployeeRole() {
+// update role_id to match the new role title/id
+
     // if the role changes we need to also possibly change the department
     // which ids will the role chanage affect: employees.role_id, roles.department_id
+    
+    // ask which employee to change the role for
+    // ask which role it will change to
+    // ask which department this new role is in
+    // update the roles.title, employees.role.id, roles.department_id
     this.connection.query(
-      `SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.id, roles.department_id, departments.department, departments.id, roles.salary, employees.manager FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id)`,
+      `SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.id, FROM employees LEFT JOIN roles ON (employees.role_id = roles.id)`,
       (err, result) => {
         if (err) throw err;
         console.table(result);
@@ -326,11 +333,11 @@ class Database {
             id: row.id,
             first: row.first_name,
             last: row.last_name});
-firstLastArray.push(row.first_name + " " + row.last_name)
+          firstLastArray.push(row.first_name + " " + row.last_name)
         })
-        console.log(firstLastArray);
+        // console.log(firstLastArray);
         // console.log(roleArray);
-        console.log(idFirstLastArray);
+        // console.log(idFirstLastArray);
         
         inquirer.prompt([
           {
@@ -347,8 +354,10 @@ firstLastArray.push(row.first_name + " " + row.last_name)
           }
         ]).then((answers)=>{
           console.log(answers);
+      
+          idFirstLastArray.filter(empployee)
           
-          this.connection.query(``)
+          this.connection.query(`UPDATE employees SET role_id = ? WHERE id = ?` [])
         });
       }
     );
