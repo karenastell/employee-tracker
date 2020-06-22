@@ -152,55 +152,100 @@ class Database {
     //    last_name
     //    manager
     //    title
+    this.connection.query(
+      `SELECT first_name, last_name, role_id FROM employees; SELECT * FROM roles;`,
+      (err, result) => {
+        const nameArray = ["No Manager"];
+        const roleArray = [];
+        const idTitleArray = []
+    
+        if (err) throw err;
+        result[0].forEach((person) => {
+         
+          nameArray.push(`${person.first_name} ${person.last_name}`);
+        });
+        result[1].forEach((role) => {
+          roleArray.push(`${role.title}`);
+       
 
-    inquirer
-      .prompt([
-        {
-          type: "input",
-          name: "first_name",
-          message: "What Is The Employee's First Name?",
-        },
-        {
-          type: "input",
-          name: "last_name",
-          message: "What Is The Employee's Last Name?",
-        },
-        {
-          type: "choice",
-          name: "manager",
-          message: "Who Is The Employee's Manager?",
-          choices: ["choice 1", "choice 2", "choice 3"],
-        },
-        {
-          type: "choice",
-          name: "title",
-          message: "What Is The Employee's Role?",
-          choices: ["choice 1", "choice 2", "choice 3"],
-        },
-      ])
-      .then((answers) => {
-        console.log(answers);
-        //        will need to query to get the list of managers
-        //        will need to query to get the list of titles in then
-        connection.query(
-          `SELECT * FROM employees; SELECT * FROM roles`,
-          (err, result) => {
-            if (err) throw err;
-            const roleArray = []
-            result[1].forEach((role)=>{
-              roleArray.push(role);  
-            })
-            console.log(`roleArray ${roleArray}`);
-            console.log(`roleArray.id ${roleArray.id}`);
+        });
+        console.log(nameArray);
+        console.log(roleArray);
+     
+        
+
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "first_name",
+              message: "What Is The Employee's First Name?",
+            },
+            {
+              type: "input",
+              name: "last_name",
+              message: "What Is The Employee's Last Name?",
+            },
+            {
+              type: "list",
+              name: "manager",
+              message: "Who Is The Employee's Manager?",
+              choices: nameArray,
+            },
+            {
+              type: "list",
+              name: "title",
+              message: "What Is The Employee's Role?",
+              choices: roleArray,
+            },
+          ])
+          .then((answers) => {
+            console.log(answers);
+            console.log(result[1]);
             
+            const findRole = result[1].find(
+              (role) => role.title === answers.title
+            );
+            console.log("findRole", findRole);
             
-          }
-          
+            const roleID = findRole.id;
+            console.log(roleID);
+            
+            //        will need to query to get the list of managers
+            //        will need to query to get the list of titles in then
+        
+            this.connection.query(
+              `INSERT INTO employees (first_name, last_name, role_id, manager) VALUES (?, ?, ?, ?)`,
+              [answers.first_name, answers.last_name, roleID, answers.manager],
+              (err, result) => {
+                if (err) throw err;
+                console.log(result);
+                console.log(
+                  `${answers.first_name} ${answers.last_name} was added`
+                );
+              }
+            );
 
-        );
+            // this.connection.query(
+            //   `SELECT * FROM employees; SELECT * FROM roles`,
+            //   (err, result) => {
+            //     if (err) throw err;
+            //     console.log(result);
+            //     console.log(roleArray);
 
-        //        will need to get the role_id that matches the title for the insert in then
-      });
+            //     // const roleArray = [];
+            //     // result[1].forEach((role) => {
+            //     //   roleArray.push(role);
+            //     // });
+            //     // console.log(`roleArray ${roleArray}`);
+            //     // console.log(`roleArray.id ${roleArray.id}`);
+            //   }
+            // );
+
+            //        will need to get the role_id that matches the title for the insert in then
+          });
+      }
+    );
 
     // answers array
 
