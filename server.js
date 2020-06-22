@@ -22,7 +22,7 @@ const startApp =()=> {
           "Add Employee",
           "Add Role",
           "Add Department",
-          //   "Remove Employee",
+            "Remove Employee",
           "Update Employee Role",
           "View All Roles",
           "View All Departments",
@@ -50,9 +50,9 @@ const startApp =()=> {
         } else if (answer.choice === "Add Department") {
           db.addDepartment();
         }
-        // else if (answer.choice === "Remove Employee") {
-        //   db.removeEmployee();
-        // }
+        else if (answer.choice === "Remove Employee") {
+          db.removeEmployee();
+        }
         else if (answer.choice === "Update Employee Role") {
           db.updateEmployeeRole();
         } else if (answer.choice === "View All Roles") {

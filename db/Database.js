@@ -336,19 +336,44 @@ class Database {
   }
 
   removeEmployee() {
-    this.connection.query(`SELECT id, first_name, last_name FROM employees;`, (err, result) => {
-      if (err) throw err;
-      const idNames = [];
-      const names = [];
-      result.forEach((employee)=>{
-        idNames.push({id: employee.id, name: `${employee.first_name} ${employee.last_name}`});
-        names.push(`${employee.first_name} ${employee.last_name}`)
-      })
-     console.log(idNames);
-     console.log(names);
-     
-   
-    });
+    this.connection.query(
+      `SELECT id, first_name, last_name FROM employees;`,
+      (err, result) => {
+        if (err) throw err;
+        const idNames = [];
+        const names = [];
+        result.forEach((employee) => {
+          idNames.push({
+            id: employee.id,
+            name: `${employee.first_name} ${employee.last_name}`,
+          });
+          names.push(`${employee.first_name} ${employee.last_name}`);
+        });
+        console.log(idNames);
+        console.log(names);
+        inquirer
+          .prompt([
+            {
+              type: "list",
+              name: "employee",
+              message: "Which Employee Would You Like To Remove?",
+              choices: names,
+            },
+          ])
+          .then((answer) => {
+            const findEmployee = idNames.find(
+              (employee) => employee.name === answer.employee
+            );
+            console.log(findEmployee);
+            const id = findEmployee.id;
+            this.connection.query(`DELETE FROM employees WHERE id = ?`, [id], (err)=>{
+              if(err) throw err;
+              console.log(`${answer.employee} has been removed`);
+              
+            })
+          });
+      }
+    );
   }
 
   updateEmployeeRole() {
