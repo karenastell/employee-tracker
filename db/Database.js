@@ -7,6 +7,7 @@ class Database {
   }
 
   viewEmployees() {
+    // makes a query to the database which joins the tables together to show all the employee information
     this.connection.query(
       "SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager from employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id)",
       (err, result) => {
@@ -16,40 +17,18 @@ class Database {
     );
   }
 
-  // reusable function - not working so far
-  viewBy(column, table, message) {
-    this.connection.query(`SELECT ${column} FROM ${table}`, (err, result) => {
-      if (err) throw err;
-      const list = [];
-      result.forEach((item) => {
-        // console.log(department.department);
-        list.push(item.column);
-      });
-      inquirer
-        .prompt({
-          type: "list",
-          name: "choice",
-          message: `Which ${message}:`,
-          choices: list,
-        })
-        .then((answer) => {
-          console.log(answer);
-        });
-    });
-  }
-
   employeesByDepartment() {
-    // this.viewBy(department, departments, Department)
+    // makes a query to the departments table
     this.connection.query(
       `SELECT department FROM departments`,
       (err, result) => {
         if (err) throw err;
+        // that query allows this list of departments to be made
         const list = [];
         result.forEach((item) => {
-          // console.log(department.department);
           list.push(item.department);
         });
-
+        // asks which department the user would like to find
         inquirer
           .prompt({
             type: "list",
@@ -59,15 +38,12 @@ class Database {
           })
           .then((answer) => {
             console.log(answer);
-
+            // makes a query to the database to get all of the information about the employee in the department that was chosen
             this.connection.query(
               `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE departments.department =?`,
               [answer.choice],
               (err, result) => {
                 if (err) throw err;
-                console.log("answer.choice: ", answer.choice);
-
-                // console.log("roles.title", title);
 
                 console.table(result);
               }
@@ -78,13 +54,15 @@ class Database {
   }
 
   employeesByRole() {
+    // makes a query to the roles table
     this.connection.query(`SELECT title FROM roles`, (err, result) => {
       if (err) throw err;
+      // that query then is used to make a list of all the role titles
       const list = [];
       result.forEach((item) => {
         list.push(item.title);
       });
-
+      // the user is asked which role title they would like to see
       inquirer
         .prompt({
           type: "list",
@@ -93,16 +71,13 @@ class Database {
           choices: list,
         })
         .then((answer) => {
-          console.log(answer);
+          // makes a query to the database to get all of the information about the employee in the role that was chosen
 
           this.connection.query(
             `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE roles.title =?`,
             [answer.choice],
             (err, result) => {
               if (err) throw err;
-              console.log("answer.choice: ", answer.choice);
-
-              // console.log("roles.title", title);
 
               console.table(result);
             }
@@ -111,14 +86,13 @@ class Database {
     });
   }
 
-  // optional
   employeesByManager() {
-    // filter through list to only show one choice per manager
+    // queries the employees table to find the manager names
     this.connection.query(`SELECT manager FROM employees`, (err, result) => {
       if (err) throw err;
+      // a list of managers is made for the inquirer prompt choices
       const list = [];
       result.forEach((item) => {
-        // console.log(department.department);
         list.push(item.manager);
       });
 
@@ -131,13 +105,12 @@ class Database {
         })
         .then((answer) => {
           console.log(answer);
-
+          // makes a query to the database to get all of the information about the employee in the manager that was chosen
           this.connection.query(
             `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE employees.manager =?`,
             [answer.choice],
             (err, result) => {
               if (err) throw err;
-              console.log("answer.choice: ", answer.choice);
 
               console.table(result);
             }
@@ -147,28 +120,23 @@ class Database {
   }
 
   addEmployee() {
-    // get employee's information
-    //    first_name
-    //    last_name
-    //    manager
-    //    title
+    // query is made to the employees and roles tables
     this.connection.query(
       `SELECT first_name, last_name, role_id FROM employees; SELECT * FROM roles;`,
       (err, result) => {
         const nameArray = ["No Manager"];
         const roleArray = [];
-        const idTitleArray = [];
 
         if (err) throw err;
+        // arrays are made with the employees first and last name to put into the inquirer prompt choices
         result[0].forEach((person) => {
           nameArray.push(`${person.first_name} ${person.last_name}`);
         });
+        // array is made with a list of roles to be put into the inquirer promp choices
         result[1].forEach((role) => {
           roleArray.push(`${role.title}`);
         });
-        console.log(nameArray);
-        console.log(roleArray);
-
+        // user answers questions about the new employee
         inquirer
           .prompt([
             {
@@ -195,25 +163,24 @@ class Database {
             },
           ])
           .then((answers) => {
-            console.log(answers);
-            console.log(result[1]);
+            // if there is no manager for this employee that value is set to null
             if (answers.manager === "No Manager") {
               answers.manager = null;
             }
+            // loops through the array of roles to find the role that was choosen for the new employee
             const findRole = result[1].find(
               (role) => role.title === answers.title
             );
-            console.log("findRole", findRole);
-
+            // roleID is set to the id cooresponding to the employee's role
             const roleID = findRole.id;
-            console.log(roleID);
 
             this.connection.query(
+              // query to insert the new employee into the employee table
               `INSERT INTO employees (first_name, last_name, role_id, manager) VALUES (?, ?, ?, ?)`,
               [answers.first_name, answers.last_name, roleID, answers.manager],
-              (err, result) => {
+              (err) => {
                 if (err) throw err;
-                console.log(result);
+
                 console.log(
                   `${answers.first_name} ${answers.last_name} was added`
                 );
@@ -226,21 +193,24 @@ class Database {
 
   addRole() {
     this.connection.query(
+      // query to the departments table to get the id and department names
       `SELECT id, department FROM departments`,
       (err, result) => {
         if (err) throw err;
         const departmentList = [];
+        // makes an array of objects with a department names and ids
         result.forEach((department) => {
           departmentList.push(department);
         });
-        console.log("department list ", departmentList);
+
         const departmentsArray = [];
+        // makes an array of department names
         departmentList.forEach((department) => {
           departmentsArray.push(department.department);
         });
-        console.log(departmentsArray);
 
         inquirer
+          // asks the user information about the new role they are adding
           .prompt([
             {
               type: "input",
@@ -261,6 +231,7 @@ class Database {
           ])
           .then((answer) => {
             let id;
+            // sets id to the id of the department
             departmentList.forEach((item) => {
               if (item.department === answer.department) {
                 id = item.id;
@@ -269,16 +240,19 @@ class Database {
             const roleArray = [];
             this.connection.query(`SELECT title FROM roles`, (err, result) => {
               if (err) throw err;
+              // makes an array of the role titles
               result.forEach((role) => {
                 roleArray.push(role.title);
               });
-              console.log("Role Array", roleArray);
+
+              // loops through the roles to make sure that role doesn't already exist
               if (roleArray.includes(answer.role)) {
                 console.log(
                   `The role ${answer.role} already exists.  Please add a different role name.`
                 );
                 this.addRole();
               } else {
+                // if it doesn't exist, it addes the role
                 this.connection.query(
                   `INSERT INTO roles(title, salary, department_id) VALUES (?, ?, ?)`,
                   [answer.role, answer.salary, id],
@@ -289,10 +263,6 @@ class Database {
                 );
               }
             });
-
-            // console.log(id);
-
-            // console.log(answer);
           });
       }
     );
@@ -304,25 +274,28 @@ class Database {
       `SELECT department FROM departments`,
       (err, result) => {
         if (err) throw err;
+        // creates an array of the department names
         result.forEach((department) => {
           departmentsArray.push(department.department);
         });
-        // console.log(departmentsArray);
       }
     );
     inquirer
+      // asks the user the new department name
       .prompt({
         type: "input",
         name: "department",
         message: "What Department Would You Like To Add?",
       })
       .then((answer) => {
+        // checks to see if that department already exists
         if (departmentsArray.includes(answer.department)) {
           console.log(
             `${answer.department} already exisits. Please add a different department name.`
           );
           this.addDepartment();
         } else {
+          // if it does not exist, it is added
           this.connection.query(
             `INSERT INTO departments (department) VALUES (?)`,
             [answer.department],
@@ -337,11 +310,13 @@ class Database {
 
   removeEmployee() {
     this.connection.query(
+      // queries the employees table
       `SELECT id, first_name, last_name FROM employees;`,
       (err, result) => {
         if (err) throw err;
         const idNames = [];
         const names = [];
+        // creates an array of objects with the id and first and last names, and also an array with the first and last name to be used in the inquirer choices
         result.forEach((employee) => {
           idNames.push({
             id: employee.id,
@@ -349,9 +324,9 @@ class Database {
           });
           names.push(`${employee.first_name} ${employee.last_name}`);
         });
-        console.log(idNames);
-        console.log(names);
+
         inquirer
+          // asks the user which employee to remove
           .prompt([
             {
               type: "list",
@@ -361,22 +336,28 @@ class Database {
             },
           ])
           .then((answer) => {
+            // finds the employee in the idNames array and makes an array with that employee's information
             const findEmployee = idNames.find(
               (employee) => employee.name === answer.employee
             );
-            console.log(findEmployee);
+            // gets the id of the employee to be removed
             const id = findEmployee.id;
-            this.connection.query(`DELETE FROM employees WHERE id = ?`, [id], (err)=>{
-              if(err) throw err;
-              console.log(`${answer.employee} has been removed`);
-              
-            })
+            this.connection.query(
+              // queries the employee table and deletes the employee
+              `DELETE FROM employees WHERE id = ?`,
+              [id],
+              (err) => {
+                if (err) throw err;
+                console.log(`${answer.employee} has been removed`);
+              }
+            );
           });
       }
     );
   }
 
   updateEmployeeRole() {
+    // queries the roles and employees tables
     this.connection.query(
       `SELECT * FROM roles; SELECT * FROM employees;`,
       (err, result) => {
@@ -385,6 +366,7 @@ class Database {
         const firstLastNames = [];
         const idFirstLast = [];
         const roleNames = [];
+        // makes arrays and arrays of objects of the employee's name and id
         result[1].forEach((name) => {
           firstLastNames.push(`${name.first_name} ${name.last_name}`);
           idFirstLast.push({
@@ -392,13 +374,12 @@ class Database {
             first_name: name.first_name + " " + name.last_name,
           });
         });
-        console.log(idFirstLast);
-        console.log(firstLastNames);
+        // makes an array of role titles
         result[0].forEach((role) => {
           roleNames.push(role.title);
         });
         console.log(roleNames);
-
+        // ask user questions about the employee's new role
         inquirer
           .prompt([
             {
@@ -415,24 +396,24 @@ class Database {
             },
           ])
           .then((answers) => {
-            console.log(answers);
-
+            // finds in the roles query which role is the user chose
             const findRole = result[0].find(
               (role) => role.title === answers.newRole
             );
-            console.log(findRole);
+            // takes that role and sets newRoleID to the role id
 
             const newRoleID = findRole.id;
-            console.log(newRoleID);
 
+            // finds in the idFirstLast array which employee is being updated
             const findEmployee = idFirstLast.find(
               (employee) => employee.first_name === answers.employee
             );
 
-            console.log(findEmployee);
+            // takes that employee and finds their id
             const employeeID = findEmployee.id;
 
             this.connection.query(
+              // queries the employees table to update the employee's role
               `UPDATE employees SET role_id = ? WHERE id = ?`,
               [newRoleID, employeeID],
               (err) => {
@@ -448,6 +429,7 @@ class Database {
   }
 
   viewAllRoles() {
+    // queries the roles table and shows a list of roles
     this.connection.query("SELECT title FROM roles", (err, result) => {
       if (err) throw err;
       console.table(result);
@@ -455,6 +437,7 @@ class Database {
   }
 
   viewAllDepartments() {
+    // queries the departments table and shows a list of departments
     this.connection.query(
       "SELECT department FROM departments",
       (err, result) => {
@@ -464,6 +447,7 @@ class Database {
     );
   }
   quitApp() {
+    // quits the app by ending the connection
     console.log("Thanks for Searching!", "\n", "See ya!");
     this.connection.end();
   }
