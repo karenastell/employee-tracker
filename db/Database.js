@@ -147,60 +147,68 @@ class Database {
   }
 
   addEmployee() {
-    this.connection.query(
-      // get employee's information
-      //    first_name
-      //    last_name 
-      //    manager
-      //        will need to query to get the list of managers
-      //    title
-      //        will need to query to get the list of titles
-      //        will need to get the role_id that matches the title for the insert
+    // get employee's information
+    //    first_name
+    //    last_name
+    //    manager
+    //    title
 
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "first_name",
+          message: "What Is The Employee's First Name?",
+        },
+        {
+          type: "input",
+          name: "last_name",
+          message: "What Is The Employee's Last Name?",
+        },
+        {
+          type: "choice",
+          name: "manager",
+          message: "Who Is The Employee's Manager?",
+          choices: ["choice 1", "choice 2", "choice 3"],
+        },
+        {
+          type: "choice",
+          name: "title",
+          message: "What Is The Employee's Role?",
+          choices: ["choice 1", "choice 2", "choice 3"],
+        },
+      ])
+      .then((answers) => {
+        console.log(answers);
+        //        will need to query to get the list of managers
+        //        will need to query to get the list of titles in then
+        connection.query(
+          `SELECT * FROM employees; SELECT * FROM roles`,
+          (err, result) => {
+            if (err) throw err;
+            const roleArray = []
+            result[1].forEach((role)=>{
+              roleArray.push(role);  
+            })
+            console.log(`roleArray ${roleArray}`);
+            console.log(`roleArray.id ${roleArray.id}`);
+            
+            
+          }
+          
 
-      // answers array
-      
-      // insert into employee's
-      //    first_name
-      //    last_name
-      //    manager
-      //    role_id
-      
-       
-      `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id)`,
-      (err, result) => {
-        if (err) throw err;
+        );
 
-        inquirer
-          .prompt([
-            {
-              type: "input",
-              name: "first_name",
-              message: "What Is The Employee's First Name?",
-            },
-            {
-              type: "input",
-              name: "last_name",
-              message: "What Is The Employee's Last Name?",
-            },
-            {
-              type: "choice",
-              name: "manager",
-              message: "Who Is The Employee's Manager?",
-              choices: ["choice 1", "choice 2", "choice 3"],
-            },
-            {
-              type: "choice",
-              name: "title",
-              message: "What Is The Employee's Role?",
-              choices: ["choice 1", "choice 2", "choice 3"],
-            },
-          ])
-          .then((answers) => {
-            console.log(answers);
-          });
-      }
-    );
+        //        will need to get the role_id that matches the title for the insert in then
+      });
+
+    // answers array
+
+    // insert into employee's
+    //    first_name
+    //    last_name
+    //    manager
+    //    role_id
   }
 
   addRole() {
