@@ -15,6 +15,7 @@ class Database {
         console.table(result);
       }
     );
+    this.stopConnection();
   }
 
   employeesByDepartment() {
@@ -37,7 +38,6 @@ class Database {
             choices: list,
           })
           .then((answer) => {
-            console.log(answer);
             // makes a query to the database to get all of the information about the employee in the department that was chosen
             this.connection.query(
               `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE departments.department =?`,
@@ -48,6 +48,7 @@ class Database {
                 console.table(result);
               }
             );
+            this.stopConnection();
           });
       }
     );
@@ -82,6 +83,7 @@ class Database {
               console.table(result);
             }
           );
+          this.stopConnection();
         });
     });
   }
@@ -115,6 +117,7 @@ class Database {
               console.table(result);
             }
           );
+          this.stopConnection();
         });
     });
   }
@@ -186,6 +189,7 @@ class Database {
                 );
               }
             );
+            this.stopConnection();
           });
       }
     );
@@ -230,6 +234,7 @@ class Database {
             },
           ])
           .then((answer) => {
+         
             let id;
             // sets id to the id of the department
             departmentList.forEach((item) => {
@@ -256,14 +261,17 @@ class Database {
                 this.connection.query(
                   `INSERT INTO roles(title, salary, department_id) VALUES (?, ?, ?)`,
                   [answer.role, answer.salary, id],
-                  (err, result) => {
+                  (err) => {
                     if (err) throw err;
                     console.log(`${answer.role} was added`);
+                     this.stopConnection();
                   }
                 );
               }
             });
+            
           });
+         
       }
     );
   }
@@ -304,7 +312,9 @@ class Database {
               console.log(`The deparment ${answer.department} has been added.`);
             }
           );
+         this.stopConnection(); 
         }
+        
       });
   }
 
@@ -351,6 +361,7 @@ class Database {
                 console.log(`${answer.employee} has been removed`);
               }
             );
+            this.stopConnection();
           });
       }
     );
@@ -362,7 +373,6 @@ class Database {
       `SELECT * FROM roles; SELECT * FROM employees;`,
       (err, result) => {
         if (err) throw err;
-        console.log("result: ", result);
         const firstLastNames = [];
         const idFirstLast = [];
         const roleNames = [];
@@ -423,6 +433,7 @@ class Database {
                 );
               }
             );
+            this.stopConnection();
           });
       }
     );
@@ -434,6 +445,7 @@ class Database {
       if (err) throw err;
       console.table(result);
     });
+    this.stopConnection();
   }
 
   viewAllDepartments() {
@@ -445,10 +457,17 @@ class Database {
         console.table(result);
       }
     );
+    this.stopConnection();
   }
+
   quitApp() {
     // quits the app by ending the connection
     console.log("Thanks for Searching!", "\n", "See ya!");
+    this.connection.end();
+  }
+
+  stopConnection() {
+    // stops the connection at the end of each function
     this.connection.end();
   }
 }
