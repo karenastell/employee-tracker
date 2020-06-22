@@ -16,7 +16,6 @@ const startApp = () => {
           "View All Employees",
           "View All Employees By Department",
           "View All Employees By Role",
-          "View all Employees By Manager",
           "Add Employee",
           "Add Role",
           "Add Department",
@@ -35,8 +34,6 @@ const startApp = () => {
         db.employeesByDepartment();
       } else if (answer.choice === "View All Employees By Role") {
         db.employeesByRole();
-      } else if (answer.choice === "View all Employees By Manager") {
-        db.employeesByManager();
       } else if (answer.choice === "Add Employee") {
         db.addEmployee();
       } else if (answer.choice === "Add Role") {

@@ -88,39 +88,7 @@ class Database {
     });
   }
 
-  employeesByManager() {
-    // queries the employees table to find the manager names
-    this.connection.query(`SELECT manager FROM employees`, (err, result) => {
-      if (err) throw err;
-      // a list of managers is made for the inquirer prompt choices
-      const list = [];
-      result.forEach((item) => {
-        list.push(item.manager);
-      });
-
-      inquirer
-        .prompt({
-          type: "list",
-          name: "choice",
-          message: "Which Manager:",
-          choices: list,
-        })
-        .then((answer) => {
-          console.log(answer);
-          // makes a query to the database to get all of the information about the employee in the manager that was chosen
-          this.connection.query(
-            `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id) WHERE employees.manager =?`,
-            [answer.choice],
-            (err, result) => {
-              if (err) throw err;
-
-              console.table(result);
-            }
-          );
-          this.stopConnection();
-        });
-    });
-  }
+  
 
   addEmployee() {
     // query is made to the employees and roles tables
