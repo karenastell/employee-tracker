@@ -157,22 +157,17 @@ class Database {
       (err, result) => {
         const nameArray = ["No Manager"];
         const roleArray = [];
-        const idTitleArray = []
-    
+        const idTitleArray = [];
+
         if (err) throw err;
         result[0].forEach((person) => {
-         
           nameArray.push(`${person.first_name} ${person.last_name}`);
         });
         result[1].forEach((role) => {
           roleArray.push(`${role.title}`);
-       
-
         });
         console.log(nameArray);
         console.log(roleArray);
-     
-        
 
         inquirer
           .prompt([
@@ -202,18 +197,17 @@ class Database {
           .then((answers) => {
             console.log(answers);
             console.log(result[1]);
-            
+            if (answers.manager === "No Manager") {
+              answers.manager = null;
+            }
             const findRole = result[1].find(
               (role) => role.title === answers.title
             );
             console.log("findRole", findRole);
-            
+
             const roleID = findRole.id;
             console.log(roleID);
-            
-            //        will need to query to get the list of managers
-            //        will need to query to get the list of titles in then
-        
+
             this.connection.query(
               `INSERT INTO employees (first_name, last_name, role_id, manager) VALUES (?, ?, ?, ?)`,
               [answers.first_name, answers.last_name, roleID, answers.manager],
@@ -225,35 +219,9 @@ class Database {
                 );
               }
             );
-
-            // this.connection.query(
-            //   `SELECT * FROM employees; SELECT * FROM roles`,
-            //   (err, result) => {
-            //     if (err) throw err;
-            //     console.log(result);
-            //     console.log(roleArray);
-
-            //     // const roleArray = [];
-            //     // result[1].forEach((role) => {
-            //     //   roleArray.push(role);
-            //     // });
-            //     // console.log(`roleArray ${roleArray}`);
-            //     // console.log(`roleArray.id ${roleArray.id}`);
-            //   }
-            // );
-
-            //        will need to get the role_id that matches the title for the insert in then
           });
       }
     );
-
-    // answers array
-
-    // insert into employee's
-    //    first_name
-    //    last_name
-    //    manager
-    //    role_id
   }
 
   addRole() {
@@ -367,20 +335,21 @@ class Database {
       });
   }
 
-  // removeEmployee() {
-  //   this.connection.query("SELECT id, first_name, last_name FROM employees", (err, result) => {
-  //     if (err) throw err;
-  //     const list = [];
-  //     result.forEach((employee)=>{
-  //       list.push({id: employee.id, first_name: employee.first_name, last_name: employee.last_name})
-  //     })
-  //    console.log(list);
-  //     const name = [];
-  //    list.forEach((person)=>{
-
-  //    })
-  //   });
-  // }
+  removeEmployee() {
+    this.connection.query(`SELECT id, first_name, last_name FROM employees;`, (err, result) => {
+      if (err) throw err;
+      const idNames = [];
+      const names = [];
+      result.forEach((employee)=>{
+        idNames.push({id: employee.id, name: `${employee.first_name} ${employee.last_name}`});
+        names.push(`${employee.first_name} ${employee.last_name}`)
+      })
+     console.log(idNames);
+     console.log(names);
+     
+   
+    });
+  }
 
   updateEmployeeRole() {
     this.connection.query(
