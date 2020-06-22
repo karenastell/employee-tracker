@@ -145,8 +145,28 @@ class Database {
         });
     });
   }
+
   addEmployee() {
     this.connection.query(
+      // get employee's information
+      //    first_name
+      //    last_name 
+      //    manager
+      //        will need to query to get the list of managers
+      //    title
+      //        will need to query to get the list of titles
+      //        will need to get the role_id that matches the title for the insert
+
+
+      // answers array
+      
+      // insert into employee's
+      //    first_name
+      //    last_name
+      //    manager
+      //    role_id
+      
+       
       `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department, roles.salary, employees.manager FROM employees LEFT JOIN roles ON (employees.role_id = roles.id) LEFT JOIN departments ON (roles.department_id = departments.id)`,
       (err, result) => {
         if (err) throw err;
@@ -309,126 +329,75 @@ class Database {
   //   });
   // }
 
-  updateEmployeeRole(){
-this.connection.query(`SELECT * FROM roles; SELECT * FROM employees;`, (err, result) =>{
-  if(err)throw err;
-  console.log("result: ", result);
-  const firstLastNames = [];
-  const idFirstLast = [];
-  const roleNames = [];
-  result[1].forEach((name)=>{
-    firstLastNames.push(`${name.first_name} ${name.last_name}`);
-idFirstLast.push({
-  id: name.id,
-  first_name: name.first_name + " " + name.last_name
-})
-  })
-  console.log(idFirstLast);
-  console.log(firstLastNames);
-  result[0].forEach((role)=>{
-    roleNames.push(role.title);
-  })
-  console.log(roleNames);
-
-  inquirer.prompt([
-    {
-      type: "list",
-      name: "employee",
-      message: "Which Employee Would You Like To Update?",
-      choices: firstLastNames,
-    },
-    {
-      type: "list",
-      name: "newRole",
-      message: "Which Role Does This Employee Now Have?",
-      choices: roleNames
-    }
-  ]).then((answers)=>{
-    console.log(answers);
-
-    const findRole = result[0].find(role => role.title === answers.newRole);
-    console.log(findRole);
-
-    const newRoleID = findRole.id;
-    console.log(newRoleID);
-
-    const findEmployee = idFirstLast.find(employee => employee.first_name === answers.employee);
-
-    console.log(findEmployee);
-    const employeeID = findEmployee.id;
-
-this.connection.query(`UPDATE employees SET role_id = ? WHERE id = ?`, [newRoleID, employeeID], (err)=>{
-  if(err)throw err;
-  console.log(`${answers.employee} has a new role of ${answers.newRole}`);
-  
-})
-  
-    // UPDATE employees SET role_id = ? WHERE id = ?
-    
-    
-  })
-  
-  
-})
-  }
-
-
-  reupdateEmployeeRole() {
-// update role_id to match the new role title/id
-
-    // if the role changes we need to also possibly change the department
-    // which ids will the role chanage affect: employees.role_id, roles.department_id
-    
-    // ask which employee to change the role for
-    // ask which role it will change to
-    // ask which department this new role is in
-    // update the roles.title, employees.role.id, roles.department_id
+  updateEmployeeRole() {
     this.connection.query(
-      `SELECT * FROM roles`, `SELECT * FROM employees`),
+      `SELECT * FROM roles; SELECT * FROM employees;`,
       (err, result) => {
         if (err) throw err;
-        console.log(result);
-        // const roleArray = [];
-        // const firstLastArray = [];
-        // const idFirstLastArray = [];
-        // result.forEach((row)=>{
-        //   roleArray.push(row.title);
-        //   idFirstLastArray.push({
-        //     id: row.id,
-        //    name: row.first_name + " " + row.last_name});
-        //   firstLastArray.push(row.first_name + " " + row.last_name)
-        // })
-        // console.log(firstLastArray);
-        // console.log(roleArray);
-        // console.log(idFirstLastArray);
-        
-        inquirer.prompt([
-          {
-            type: "list",
-            name: "employee",
-            message: "Which Employee Would You Like To Update?",
-            choices: firstLastArray,
-          },
-          {
-            type: "list",
-            name: "newRole",
-            message: "Which Role Does This Employee Now Have?",
-            choices: roleArray
-          }
-        ]).then((answers)=>{
-          console.log(answers);
-          console.log("answers.employee", answers.employee);
-          
-  //         const employeesRoleId = idFirstLastArray.find((name)=> {
-  //           name.name === answers.employee;
-  //         })
-    
-  // console.log("find: ", employeesRoleId);
-  
-          // this.connection.query(`UPDATE employees SET role_id = ? WHERE id = ?` [])
+        console.log("result: ", result);
+        const firstLastNames = [];
+        const idFirstLast = [];
+        const roleNames = [];
+        result[1].forEach((name) => {
+          firstLastNames.push(`${name.first_name} ${name.last_name}`);
+          idFirstLast.push({
+            id: name.id,
+            first_name: name.first_name + " " + name.last_name,
+          });
         });
+        console.log(idFirstLast);
+        console.log(firstLastNames);
+        result[0].forEach((role) => {
+          roleNames.push(role.title);
+        });
+        console.log(roleNames);
+
+        inquirer
+          .prompt([
+            {
+              type: "list",
+              name: "employee",
+              message: "Which Employee Would You Like To Update?",
+              choices: firstLastNames,
+            },
+            {
+              type: "list",
+              name: "newRole",
+              message: "Which Role Does This Employee Now Have?",
+              choices: roleNames,
+            },
+          ])
+          .then((answers) => {
+            console.log(answers);
+
+            const findRole = result[0].find(
+              (role) => role.title === answers.newRole
+            );
+            console.log(findRole);
+
+            const newRoleID = findRole.id;
+            console.log(newRoleID);
+
+            const findEmployee = idFirstLast.find(
+              (employee) => employee.first_name === answers.employee
+            );
+
+            console.log(findEmployee);
+            const employeeID = findEmployee.id;
+
+            this.connection.query(
+              `UPDATE employees SET role_id = ? WHERE id = ?`,
+              [newRoleID, employeeID],
+              (err) => {
+                if (err) throw err;
+                console.log(
+                  `${answers.employee} has a new role of ${answers.newRole}`
+                );
+              }
+            );
+          });
       }
-    ;
+    );
   }
 
   viewAllRoles() {
