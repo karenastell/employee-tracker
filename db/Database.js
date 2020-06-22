@@ -88,8 +88,6 @@ class Database {
     });
   }
 
-  
-
   addEmployee() {
     // query is made to the employees and roles tables
     this.connection.query(
@@ -202,7 +200,6 @@ class Database {
             },
           ])
           .then((answer) => {
-         
             let id;
             // sets id to the id of the department
             departmentList.forEach((item) => {
@@ -232,14 +229,12 @@ class Database {
                   (err) => {
                     if (err) throw err;
                     console.log(`${answer.role} was added`);
-                     this.stopConnection();
+                    this.stopConnection();
                   }
                 );
               }
             });
-            
           });
-         
       }
     );
   }
@@ -280,9 +275,8 @@ class Database {
               console.log(`The deparment ${answer.department} has been added.`);
             }
           );
-         this.stopConnection(); 
+          this.stopConnection();
         }
-        
       });
   }
 
@@ -356,7 +350,7 @@ class Database {
         result[0].forEach((role) => {
           roleNames.push(role.title);
         });
-        console.log(roleNames);
+
         // ask user questions about the employee's new role
         inquirer
           .prompt([
